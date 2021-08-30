@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-row style="height:840px">
+      <search-bar @onSearch="searchResult" ref="searchBar"></search-bar>
       <el-tooltip effect="dark" placement="right" v-for="item in books" :key="item.id">
         <p slot="content" style="font-size: 14px;margin-bottom: 6px">{{item.title}}</p>
         <p slot="content" style="font-size: 13px;margin-bottom: 6px">
@@ -11,27 +12,32 @@
         <p slot="content" style="width:300px" class="abstract">{{item.abs}}</p>
         <el-card style="width:135px;margin-bottom: 20px;height:233px;float: left;margin-right: 15px" class="book"
                   bodyStyle="padding:10px" shadow="hover">
-          <div calss="cover">
+          <div calss="cover" @click="editBook(item)">
             <img :src="item.cover" alt="封面">
           </div>
           <div class="info">
             <div class="title">
               <a href="http://www.baidu.com">{{item.title}}</a>
             </div>
+            <i class="el-icon-delete" @click="deleteBook(item.id)"></i>
           </div>
           <div class="author">{{item.author}}</div>
         </el-card>
       </el-tooltip>
     </el-row>
     <el-row>
-    <el-pagination :current-page="1" :page-size="10" :total="20"></el-pagination>
+    <el-pagination :current-page="currentPage" :page-size="pagesize"
+                   :total="books.total"
+                    @current-change="handleCurrentChange"></el-pagination>
     </el-row>
   </div>
 </template>
 
 <script>
+import SearchBar from "./SearchBar";
 export default {
   name: "books",
+  components: {SearchBar},
   data(){
     return{
       books:[
@@ -62,6 +68,27 @@ export default {
     },
     handleCurrentChange(currentPage){
       this.currentPage = currentPage
+    },
+    searchResult(){
+      var _this = this
+      this.$axios.get('/search?keywords='+this.$refs.searchBar.keywords,{}).then(res =>{
+        if(res&&res.status === 200){
+          _this.books = res.data
+        }
+      })
+    },
+    deleteBook(id){
+      this.$confirm('确定删除？','提示',{
+        confirmButtonText:'确定',
+        cancelButtonText:'取消',
+        type:'warning'
+      }).then(() =>{
+        this.$axios.post('/delete',{id:id}).then(res =>{
+          if(res&&res.status === 200){
+            this.loadBooks()
+          }
+        })
+      })
     }
   }
 
