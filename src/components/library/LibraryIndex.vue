@@ -25,6 +25,7 @@ export default {
       var url = 'categories/'+ cid + '/books'
       this.$axios.get(url).then(res =>{
         if(res&& res.status ===200){
+          console.log('_this.$refs.booksArea',_this.$refs.booksArea)
           _this.$refs.booksArea.books = res.data
         }
       })
