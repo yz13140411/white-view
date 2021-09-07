@@ -14,7 +14,7 @@
       </el-menu-item>
 
 <!--      <a href="#nowhere" style="color: #222;float:right;float: right;padding: 20px;">更多功能</a>-->
-      <i class="el-icon-menu" style="float: right;font-size: 45px;color: #222;padding-top: 8px"></i>
+      <i class="el-icon-switch-button" @click="logout"></i>
       <span style="position: absolute;padding-top: 20px;right: 43%;font-size: 20px;font-weight: bold">hello world</span>
       <el-input
         placeholder="快速搜索.."
@@ -30,6 +30,7 @@
 </template>
 
 <script>
+let _this = this;
 export default {
   name: "NavMenu",
   data(){
@@ -56,6 +57,16 @@ export default {
         return this.$route.path
       }
     }
+  },
+  methods:{
+    logout() {
+      this.$axios.get('/logout').then(res =>{
+        if(res.data.code === 200){
+          _this.$store.commit('logout')
+          _this.$router.replace('/login')
+        }
+      })
+    }
   }
 }
 </script>
@@ -63,6 +74,14 @@ export default {
 <style scoped>
   a{
     text-decoration: none;
+  }
+  .el-icon-switch-button{
+    float: right;
+    font-size:40px ;
+    color: #222;
+    padding: 10px;
+    cursor: pointer;
+    outline: 0;
   }
   span{
     pointer-events: none;

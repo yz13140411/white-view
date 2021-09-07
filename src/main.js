@@ -6,10 +6,11 @@ import axios from "axios"
 import ElementUI from "element-ui"
 import 'element-ui/lib/theme-chalk/index.css'
 import store from './store'
-
-
 Vue.use(ElementUI)
 Vue.config.productionTip = false
+
+// 使请求带上凭证信息
+axios.defaults.withCredentials = true
 const $axios = axios.create({
   baseURL:'http://localhost:8081/api',
   headers:{
@@ -24,7 +25,11 @@ const $axios = axios.create({
 router.beforeEach((to,from,next) =>{
   if (to.meta.requireAuth){
     if(store.state.user.username){
-      next()
+      axios.get('/authentication').then(res =>{
+        if(res){
+          next()
+        }
+      })
     }else {
       next({
         path:'login',

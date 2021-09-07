@@ -12,9 +12,10 @@ export default new Vuex.Store({
         }
     },
     mutations:{
-        login(state,user){
-            state.user = user
-            window.localStorage.setItem('user',JSON.stringify(user))
+        login(state){
+            state.user = []
+            window.localStorage.removeItem('user')
+            //window.localStorage.setItem('user',JSON.stringify(user))
         }
     }
 
